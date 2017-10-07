@@ -6,6 +6,59 @@ use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface
 {
+    /**
+     * @var string
+     */
+    private $scheme;
+
+    /**
+     * @var string
+     */
+    private $host;
+
+    /**
+     * @var string
+     */
+    private $port;
+
+    /**
+     * @var string
+     */
+    private $user;
+
+    /**
+     * @var string
+     */
+    private $pass;
+
+    /**
+     * @var string
+     */
+    private $path;
+
+    /**
+     * @var string
+     */
+    private $query;
+
+    /**
+     * @var string
+     */
+    private $fragment;
+
+    public function __construct(string $uri)
+    {
+        $parse = parse_url($uri);
+
+        $this->scheme = isset($parse["scheme"]) ? $parse["scheme"] : "";
+        $this->host = isset($parse["host"]) ? $parse["host"] : "";
+        $this->port = isset($parse["port"]) ? $parse["port"] : "";
+        $this->user = isset($parse["user"]) ? $parse["user"] : "";
+        $this->pass = isset($parse["pass"]) ? $parse["pass"] : "";
+        $this->path = isset($parse["path"]) ? $parse["path"] : "";
+        $this->query = isset($parse["query"]) ? $parse["query"] : "";
+        $this->fragment = isset($parse["fragment"]) ? $parse["fragment"] : "";
+    }
 
     /**
      * Retrieve the scheme component of the URI.
@@ -23,7 +76,7 @@ class Uri implements UriInterface
      */
     public function getScheme()
     {
-        // TODO: Implement getScheme() method.
+        return $this->scheme;
     }
 
     /**
@@ -46,7 +99,13 @@ class Uri implements UriInterface
      */
     public function getAuthority()
     {
-        // TODO: Implement getAuthority() method.
+        $host = !empty($this->host) ? $this->host : '';
+        $port = !empty($this->port) ? ':' . $this->port : '';
+        $user = !empty($this->user) ? $this->user : '';
+        $pass = !empty($this->pass) ? ':' . $this->pass : '';
+        $pass = ($user || $pass) ? "$pass@" : '';
+
+        return "$user$pass$host$port";
     }
 
     /**
@@ -66,7 +125,7 @@ class Uri implements UriInterface
      */
     public function getUserInfo()
     {
-        // TODO: Implement getUserInfo() method.
+        return $this->user . ($this->pass ? ":" . $this->pass : "");
     }
 
     /**
@@ -82,7 +141,7 @@ class Uri implements UriInterface
      */
     public function getHost()
     {
-        // TODO: Implement getHost() method.
+        return $this->host;
     }
 
     /**
@@ -102,7 +161,7 @@ class Uri implements UriInterface
      */
     public function getPort()
     {
-        // TODO: Implement getPort() method.
+        return $this->port;
     }
 
     /**
@@ -132,7 +191,7 @@ class Uri implements UriInterface
      */
     public function getPath()
     {
-        // TODO: Implement getPath() method.
+        return $this->path;
     }
 
     /**
@@ -157,7 +216,7 @@ class Uri implements UriInterface
      */
     public function getQuery()
     {
-        // TODO: Implement getQuery() method.
+        return $this->query;
     }
 
     /**
@@ -178,7 +237,7 @@ class Uri implements UriInterface
      */
     public function getFragment()
     {
-        // TODO: Implement getFragment() method.
+        return $this->fragment;
     }
 
     /**
@@ -198,7 +257,7 @@ class Uri implements UriInterface
      */
     public function withScheme($scheme)
     {
-        // TODO: Implement withScheme() method.
+        $this->scheme = (string)$scheme;
     }
 
     /**
@@ -217,7 +276,7 @@ class Uri implements UriInterface
      */
     public function withUserInfo($user, $password = null)
     {
-        // TODO: Implement withUserInfo() method.
+        $this->userInfo = (string)$user . ($password ? ":" . (string)$password : "");
     }
 
     /**
@@ -234,7 +293,7 @@ class Uri implements UriInterface
      */
     public function withHost($host)
     {
-        // TODO: Implement withHost() method.
+        $this->host = (string)$host;
     }
 
     /**
@@ -256,7 +315,7 @@ class Uri implements UriInterface
      */
     public function withPort($port)
     {
-        // TODO: Implement withPort() method.
+        $this->port = (string)$port;
     }
 
     /**
@@ -283,7 +342,7 @@ class Uri implements UriInterface
      */
     public function withPath($path)
     {
-        // TODO: Implement withPath() method.
+        $this->path = (string)$path;
     }
 
     /**
@@ -303,7 +362,7 @@ class Uri implements UriInterface
      */
     public function withQuery($query)
     {
-        // TODO: Implement withQuery() method.
+        $this->query = (string)$query;
     }
 
     /**
@@ -322,7 +381,7 @@ class Uri implements UriInterface
      */
     public function withFragment($fragment)
     {
-        // TODO: Implement withFragment() method.
+        $this->fragment = (string)$fragment;
     }
 
     /**
@@ -350,6 +409,16 @@ class Uri implements UriInterface
      */
     public function __toString()
     {
-        // TODO: Implement __toString() method.
+        $scheme = !empty($this->scheme) ? $this->scheme . '://' : '';
+        $host = !empty($this->host) ? $this->host : '';
+        $port = !empty($this->port) ? ':' . $this->port : '';
+        $user = !empty($this->user) ? $this->user : '';
+        $pass = !empty($this->pass) ? ':' . $this->pass : '';
+        $pass = ($user || $pass) ? "$pass@" : '';
+        $path = !empty($this->path) ? $this->path : '';
+        $query = !empty($this->query) ? '?' . $this->query : '';
+        $fragment = !empty($this->fragment) ? '#' . $this->fragment : '';
+
+        return "$scheme$user$pass$host$port$path$query$fragment";
     }
 }
