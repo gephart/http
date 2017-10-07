@@ -4,5 +4,5 @@ php:
 
 script:
   - composer install
-  - phpunit Tests
+  - phpunit tests
   - ./vendor/bin/phpcs --standard=PSR2 ./src
