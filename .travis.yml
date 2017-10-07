@@ -1,0 +1,8 @@
+language: php
+php:
+  - '7.1'
+
+script:
+  - composer install
+  - phpunit Tests
+  - ./vendor/bin/phpcs --standard=PSR2 ./src
