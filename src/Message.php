@@ -2,11 +2,26 @@
 
 namespace Gephart\Http;
 
+use Gephart\Http\Exception\MessageException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
 class Message implements MessageInterface
 {
+    /**
+     * @var string
+     */
+    private $protocol = "1.1";
+
+    /**
+     * @var string[][]
+     */
+    private $headers;
+
+    /**
+     * @var StreamInterface
+     */
+    private $body;
 
     /**
      * Retrieves the HTTP protocol version as a string.
@@ -17,7 +32,7 @@ class Message implements MessageInterface
      */
     public function getProtocolVersion()
     {
-        // TODO: Implement getProtocolVersion() method.
+        return $this->protocol;
     }
 
     /**
@@ -32,10 +47,18 @@ class Message implements MessageInterface
      *
      * @param string $version HTTP protocol version
      * @return static
+     * @throws MessageException
      */
     public function withProtocolVersion($version)
     {
-        // TODO: Implement withProtocolVersion() method.
+        if (!in_array($version, ["1.0", "1.1"])) {
+            throw new MessageException("Protocol version must be 1.0 or 1.1.");
+        }
+
+        $immutable = clone $this;
+        $immutable->protocol = $version;
+
+        return $immutable;
     }
 
     /**
@@ -65,7 +88,7 @@ class Message implements MessageInterface
      */
     public function getHeaders()
     {
-        // TODO: Implement getHeaders() method.
+        return $this->headers;
     }
 
     /**
@@ -78,7 +101,8 @@ class Message implements MessageInterface
      */
     public function hasHeader($name)
     {
-        // TODO: Implement hasHeader() method.
+        $name_ci = strtolower($name);
+        return in_array($name_ci, array_keys($this->headers));
     }
 
     /**
@@ -97,7 +121,12 @@ class Message implements MessageInterface
      */
     public function getHeader($name)
     {
-        // TODO: Implement getHeader() method.
+        if (!$this->hasHeader($name)) {
+            return [];
+        }
+
+        $name_ci = strtolower($name);
+        return $this->headers[$name_ci];
     }
 
     /**
@@ -121,7 +150,8 @@ class Message implements MessageInterface
      */
     public function getHeaderLine($name)
     {
-        // TODO: Implement getHeaderLine() method.
+        $header = $this->getHeader($name);
+        return (string)implode(",", $header);
     }
 
     /**
@@ -141,7 +171,13 @@ class Message implements MessageInterface
      */
     public function withHeader($name, $value)
     {
-        // TODO: Implement withHeader() method.
+        $name_ci = strtolower($name);
+        $value = is_array($value) ? $value : [$value];
+
+        $immutable = clone $this;
+        $immutable->headers[$name_ci] = $value;
+
+        return $immutable;
     }
 
     /**
@@ -162,7 +198,17 @@ class Message implements MessageInterface
      */
     public function withAddedHeader($name, $value)
     {
-        // TODO: Implement withAddedHeader() method.
+        $name_ci = strtolower($name);
+        $value = is_array($value) ? $value : [$value];
+
+        $immutable = clone $this;
+        
+        if ($immutable->hasHeader($name_ci)) {
+            $value = array_merge($immutable->headers[$name_ci], $value);
+        }
+
+        $immutable->headers[$name_ci] = $value;
+        return $immutable;
     }
 
     /**
@@ -179,7 +225,15 @@ class Message implements MessageInterface
      */
     public function withoutHeader($name)
     {
-        // TODO: Implement withoutHeader() method.
+        $name_ci = strtolower($name);
+
+        $immutable = clone $this;
+
+        if ($immutable->hasHeader($name_ci)) {
+            unset($immutable->headers[$name_ci]);
+        }
+
+        return $immutable;
     }
 
     /**
@@ -189,7 +243,7 @@ class Message implements MessageInterface
      */
     public function getBody()
     {
-        // TODO: Implement getBody() method.
+        return $this->body;
     }
 
     /**
@@ -207,6 +261,8 @@ class Message implements MessageInterface
      */
     public function withBody(StreamInterface $body)
     {
-        // TODO: Implement withBody() method.
+        $immutable = clone $this;
+        $immutable->body = $body;
+        return $immutable;
     }
 }
