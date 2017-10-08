@@ -11,12 +11,12 @@ class Message implements MessageInterface
     /**
      * @var string
      */
-    private $protocol = "1.1";
+    protected $protocol = "1.1";
 
     /**
      * @var string[][]
      */
-    private $headers;
+    private $headers = [];
 
     /**
      * @var StreamInterface
@@ -178,6 +178,16 @@ class Message implements MessageInterface
         $immutable->headers[$name_ci] = $value;
 
         return $immutable;
+    }
+
+    public function setHeader($name, $value)
+    {
+        $name_ci = strtolower($name);
+        $value = is_array($value) ? $value : [$value];
+
+        $this->headers[$name_ci] = $value;
+
+        return $this;
     }
 
     /**

@@ -11,7 +11,7 @@ class Stream implements StreamInterface
      */
     private $resource;
 
-    public function __construct($stream, $mode)
+    public function __construct($stream, $mode = "r")
     {
         $this->resource = fopen($stream, $mode);
     }

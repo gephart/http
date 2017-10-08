@@ -7,6 +7,39 @@ use Psr\Http\Message\UploadedFileInterface;
 
 class UploadedFile implements UploadedFileInterface
 {
+    /**
+     * @var string
+     */
+    private $tmpName;
+
+    /**
+     * @var string
+     */
+    private $size;
+
+    /**
+     * @var string
+     */
+    private $error;
+
+    /**
+     * @var string
+     */
+    private $filename;
+
+    /**
+     * @var string
+     */
+    private $type;
+
+    public function __construct(string $tmpName, string $size, string $error, string  $filename, string $type)
+    {
+        $this->tmpName = $tmpName;
+        $this->size = $size;
+        $this->error = $error;
+        $this->filename = $filename;
+        $this->type = $type;
+    }
 
     /**
      * Retrieve a stream representing the uploaded file.
@@ -26,7 +59,7 @@ class UploadedFile implements UploadedFileInterface
      */
     public function getStream()
     {
-        // TODO: Implement getStream() method.
+        return new Stream($this->tmpName);
     }
 
     /**
@@ -63,7 +96,9 @@ class UploadedFile implements UploadedFileInterface
      */
     public function moveTo($targetPath)
     {
-        // TODO: Implement moveTo() method.
+        if (move_uploaded_file($this->tmpName, $targetPath) === false) {
+            throw new \RuntimeException("Problem with moving file.");
+        }
     }
 
     /**
@@ -77,7 +112,7 @@ class UploadedFile implements UploadedFileInterface
      */
     public function getSize()
     {
-        // TODO: Implement getSize() method.
+        return $this->size;
     }
 
     /**
@@ -96,7 +131,7 @@ class UploadedFile implements UploadedFileInterface
      */
     public function getError()
     {
-        // TODO: Implement getError() method.
+        return $this->error;
     }
 
     /**
@@ -114,7 +149,7 @@ class UploadedFile implements UploadedFileInterface
      */
     public function getClientFilename()
     {
-        // TODO: Implement getClientFilename() method.
+        return $this->filename;
     }
 
     /**
@@ -132,6 +167,6 @@ class UploadedFile implements UploadedFileInterface
      */
     public function getClientMediaType()
     {
-        // TODO: Implement getClientMediaType() method.
+        return $this->type;
     }
 }

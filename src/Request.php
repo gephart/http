@@ -3,10 +3,97 @@
 namespace Gephart\Http;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
 class Request extends Message implements ServerRequestInterface
 {
+    /**
+     * @var UriInterface
+     */
+    private $uri;
+
+    /**
+     * @var StreamInterface
+     */
+    private $body;
+
+    /**
+     * @var array
+     */
+    private $serverParams;
+
+    /**
+     * @var array
+     */
+    private $queryParams;
+
+    /**
+     * @var array
+     */
+    private $parsedBody;
+
+    /**
+     * @var string
+     */
+    private $method;
+
+    /**
+     * @var array
+     */
+    private $cookies;
+
+    /**
+     * @var array
+     */
+    private $headers;
+
+    /**
+     * @var UploadedFileInterface[]
+     */
+    private $uploadedFiles;
+
+    /**
+     * @var string
+     */
+    private $requestTarget;
+
+    /**
+     * @var array
+     */
+    private $attributes = [];
+
+    public function __construct(
+        UriInterface $uri,
+        StreamInterface $body = null,
+        array $serverParams = [],
+        array $queryParams = [],
+        array $parsedBody = [],
+        string $method = "GET",
+        array $cookies = [],
+        array $headers = [],
+        array $uploadedFiles = [],
+        string $protocol = "1.1"
+    ) {
+        $this->uri = $uri;
+        $this->body = $body;
+        $this->serverParams = $serverParams;
+        $this->queryParams = $queryParams;
+        $this->parsedBody = $parsedBody;
+        $this->method = $method;
+        $this->cookies = $cookies;
+        $this->headers = $headers;
+        $this->uploadedFiles = $uploadedFiles;
+        $this->protocol = $protocol;
+
+        $this->requestTarget = $uri->getPath();
+
+        if (!$this->hasHeader("Host")) {
+            $host = $this->uri->getHost() . ($this->uri->getPort() ? ":" . $this->uri->getPort() : "");
+            $this->setHeader("Host", $host);
+        }
+    }
 
     /**
      * Retrieves the message's request target.
@@ -26,7 +113,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getRequestTarget()
     {
-        // TODO: Implement getRequestTarget() method.
+        return $this->requestTarget;
     }
 
     /**
@@ -48,7 +135,9 @@ class Request extends Message implements ServerRequestInterface
      */
     public function withRequestTarget($requestTarget)
     {
-        // TODO: Implement withRequestTarget() method.
+        $immutable = clone $this;
+        $immutable->requestTarget = $requestTarget;
+        return $immutable;
     }
 
     /**
@@ -58,7 +147,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getMethod()
     {
-        // TODO: Implement getMethod() method.
+        return $this->method;
     }
 
     /**
@@ -78,7 +167,9 @@ class Request extends Message implements ServerRequestInterface
      */
     public function withMethod($method)
     {
-        // TODO: Implement withMethod() method.
+        $immutable = clone $this;
+        $immutable->method = $method;
+        return $immutable;
     }
 
     /**
@@ -92,7 +183,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getUri()
     {
-        // TODO: Implement getUri() method.
+        return $this->uri;
     }
 
     /**
@@ -127,7 +218,15 @@ class Request extends Message implements ServerRequestInterface
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
-        // TODO: Implement withUri() method.
+        $immutable = clone $this;
+        $immutable->uri = $uri;
+
+        if ($preserveHost && $immutable->hasHeader('Host')) {
+            return $immutable;
+        }
+
+        $host = $this->uri->getHost() . ($this->uri->getPort() ? ":" . $this->uri->getPort() : "");
+        return $immutable->withHeader("Host", $host);
     }
 
     /**
@@ -141,7 +240,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getServerParams()
     {
-        // TODO: Implement getServerParams() method.
+        return $this->serverParams;
     }
 
     /**
@@ -156,7 +255,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getCookieParams()
     {
-        // TODO: Implement getCookieParams() method.
+        return $this->cookies;
     }
 
     /**
@@ -178,7 +277,9 @@ class Request extends Message implements ServerRequestInterface
      */
     public function withCookieParams(array $cookies)
     {
-        // TODO: Implement withCookieParams() method.
+        $immutable = clone $this;
+        $immutable->cookies = $cookies;
+        return $immutable;
     }
 
     /**
@@ -195,7 +296,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getQueryParams()
     {
-        // TODO: Implement getQueryParams() method.
+        return $this->queryParams;
     }
 
     /**
@@ -222,7 +323,9 @@ class Request extends Message implements ServerRequestInterface
      */
     public function withQueryParams(array $query)
     {
-        // TODO: Implement withQueryParams() method.
+        $immutable = clone $this;
+        $immutable->queryParams = $query;
+        return $immutable;
     }
 
     /**
@@ -239,7 +342,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getUploadedFiles()
     {
-        // TODO: Implement getUploadedFiles() method.
+        return $this->uploadedFiles;
     }
 
     /**
@@ -255,7 +358,9 @@ class Request extends Message implements ServerRequestInterface
      */
     public function withUploadedFiles(array $uploadedFiles)
     {
-        // TODO: Implement withUploadedFiles() method.
+        $immutable = clone $this;
+        $immutable->uploadedFiles = $uploadedFiles;
+        return $immutable;
     }
 
     /**
@@ -275,7 +380,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getParsedBody()
     {
-        // TODO: Implement getParsedBody() method.
+        return $this->parsedBody;
     }
 
     /**
@@ -308,7 +413,9 @@ class Request extends Message implements ServerRequestInterface
      */
     public function withParsedBody($data)
     {
-        // TODO: Implement withParsedBody() method.
+        $immutable = clone $this;
+        $immutable->parsedBody = $data;
+        return $immutable;
     }
 
     /**
@@ -324,7 +431,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getAttributes()
     {
-        // TODO: Implement getAttributes() method.
+        return $this->attributes;
     }
 
     /**
@@ -344,7 +451,11 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getAttribute($name, $default = null)
     {
-        // TODO: Implement getAttribute() method.
+        if (!empty($this->attributes[$name])) {
+            return $this->attributes[$name];
+        }
+
+        return $default;
     }
 
     /**
@@ -364,7 +475,9 @@ class Request extends Message implements ServerRequestInterface
      */
     public function withAttribute($name, $value)
     {
-        // TODO: Implement withAttribute() method.
+        $immutable = clone $this;
+        $immutable->attributes[$name] = $value;
+        return $immutable;
     }
 
     /**
@@ -383,6 +496,10 @@ class Request extends Message implements ServerRequestInterface
      */
     public function withoutAttribute($name)
     {
-        // TODO: Implement withoutAttribute() method.
+        $immutable = clone $this;
+        if (isset($this->attributes[$name])) {
+            unset($immutable->attributes[$name]);
+        }
+        return $immutable;
     }
 }
