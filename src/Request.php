@@ -15,11 +15,6 @@ class Request extends Message implements ServerRequestInterface
     private $uri;
 
     /**
-     * @var StreamInterface
-     */
-    private $body;
-
-    /**
      * @var array
      */
     private $serverParams;
@@ -43,11 +38,6 @@ class Request extends Message implements ServerRequestInterface
      * @var array
      */
     private $cookies;
-
-    /**
-     * @var array
-     */
-    private $headers;
 
     /**
      * @var UploadedFileInterface[]
@@ -83,11 +73,15 @@ class Request extends Message implements ServerRequestInterface
         $this->parsedBody = $parsedBody;
         $this->method = $method;
         $this->cookies = $cookies;
-        $this->headers = $headers;
         $this->uploadedFiles = $uploadedFiles;
         $this->protocol = $protocol;
 
         $this->requestTarget = $uri->getPath();
+
+
+        foreach ($headers as $name => $value) {
+            $this->setHeader($name, $value);
+        }
 
         if (!$this->hasHeader("Host")) {
             $host = $this->uri->getHost() . ($this->uri->getPort() ? ":" . $this->uri->getPort() : "");

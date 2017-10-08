@@ -16,12 +16,12 @@ class Message implements MessageInterface
     /**
      * @var string[][]
      */
-    private $headers = [];
+    protected $headers = [];
 
     /**
      * @var StreamInterface
      */
-    private $body;
+    protected $body;
 
     /**
      * Retrieves the HTTP protocol version as a string.
@@ -180,7 +180,7 @@ class Message implements MessageInterface
         return $immutable;
     }
 
-    public function setHeader($name, $value)
+    protected function setHeader($name, $value)
     {
         $name_ci = strtolower($name);
         $value = is_array($value) ? $value : [$value];
