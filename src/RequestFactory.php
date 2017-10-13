@@ -83,7 +83,6 @@ class RequestFactory
             } elseif (isset($file["tmp_name"]) && is_array($file["tmp_name"])) {
                 $keys = array_keys($file["tmp_name"]);
                 foreach ($keys as $key) {
-                    if
                     $files[] = $this->getUploadedFileByStd([
                         "tmp_name" => $file["tmp_name"][$key],
                         "size" => $file["size"][$key],
