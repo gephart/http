@@ -73,17 +73,18 @@ class RequestFactory
         }
 
         $files = [];
-        foreach ($_FILES as $file) {
+        foreach ($_FILES as $name => $file) {
             if (empty($file["tmp_name"])) {
                 continue;
             }
 
             if (isset($file["tmp_name"]) && is_string($file["tmp_name"])) {
-                $files[] = $this->getUploadedFileByStd($file);
+                $files[$name] = $this->getUploadedFileByStd($file);
             } elseif (isset($file["tmp_name"]) && is_array($file["tmp_name"])) {
+                $files[$name] = [];
                 $keys = array_keys($file["tmp_name"]);
                 foreach ($keys as $key) {
-                    $files[] = $this->getUploadedFileByStd([
+                    $files[$name][] = $this->getUploadedFileByStd([
                         "tmp_name" => $file["tmp_name"][$key],
                         "size" => $file["size"][$key],
                         "error" => $file["error"][$key],
