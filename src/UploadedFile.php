@@ -99,6 +99,8 @@ class UploadedFile implements UploadedFileInterface
         if (move_uploaded_file($this->tmpName, $targetPath) === false) {
             throw new \RuntimeException("Problem with moving file.");
         }
+
+        return true;
     }
 
     /**
