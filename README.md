@@ -17,4 +17,35 @@ composer require gephart/http dev-master
 
 Using
 ---
-TODO
+
+Request:
+
+```php
+$request = (new Gephart\Http\RequestFactory())->createFromGlobals();
+```
+
+Response:
+
+```php
+<?php
+
+use Gephart\Http\Response;
+use Gephart\Http\Stream;
+
+class JsonResponseFactory
+{
+    public function createResponse($content, int $statusCode = 200, $headers = [])
+    {
+        $body = json_encode($content);
+
+        $stream = new Stream("php://temp", "rw");
+        $stream->write($body);
+
+        $response = new Response($stream, $statusCode, $headers);
+        return $response;
+    }
+}
+
+$reponse = (new JsonResponseFactory)->createResponse(["data"=>"data"]);
+
+```
