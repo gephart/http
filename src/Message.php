@@ -19,7 +19,7 @@ class Message implements MessageInterface
     protected $headers = [];
 
     /**
-     * @var StreamInterface
+     * @var StreamInterface|null
      */
     protected $body;
 
@@ -101,8 +101,8 @@ class Message implements MessageInterface
      */
     public function hasHeader($name)
     {
-        $name_ci = strtolower($name);
-        return in_array($name_ci, array_keys($this->headers));
+        $nameCi = strtolower($name);
+        return in_array($nameCi, array_keys($this->headers));
     }
 
     /**
@@ -125,8 +125,8 @@ class Message implements MessageInterface
             return [];
         }
 
-        $name_ci = strtolower($name);
-        return $this->headers[$name_ci];
+        $nameCi = strtolower($name);
+        return $this->headers[$nameCi];
     }
 
     /**
@@ -171,21 +171,21 @@ class Message implements MessageInterface
      */
     public function withHeader($name, $value)
     {
-        $name_ci = strtolower($name);
+        $nameCi = strtolower($name);
         $value = is_array($value) ? $value : [$value];
 
         $immutable = clone $this;
-        $immutable->headers[$name_ci] = $value;
+        $immutable->headers[$nameCi] = $value;
 
         return $immutable;
     }
 
     protected function setHeader($name, $value)
     {
-        $name_ci = strtolower($name);
+        $nameCi = strtolower($name);
         $value = is_array($value) ? $value : [$value];
 
-        $this->headers[$name_ci] = $value;
+        $this->headers[$nameCi] = $value;
 
         return $this;
     }
@@ -208,16 +208,16 @@ class Message implements MessageInterface
      */
     public function withAddedHeader($name, $value)
     {
-        $name_ci = strtolower($name);
+        $nameCi = strtolower($name);
         $value = is_array($value) ? $value : [$value];
 
         $immutable = clone $this;
         
-        if ($immutable->hasHeader($name_ci)) {
-            $value = array_merge($immutable->headers[$name_ci], $value);
+        if ($immutable->hasHeader($nameCi)) {
+            $value = array_merge($immutable->headers[$nameCi], $value);
         }
 
-        $immutable->headers[$name_ci] = $value;
+        $immutable->headers[$nameCi] = $value;
         return $immutable;
     }
 
@@ -235,12 +235,12 @@ class Message implements MessageInterface
      */
     public function withoutHeader($name)
     {
-        $name_ci = strtolower($name);
+        $nameCi = strtolower($name);
 
         $immutable = clone $this;
 
-        if ($immutable->hasHeader($name_ci)) {
-            unset($immutable->headers[$name_ci]);
+        if ($immutable->hasHeader($nameCi)) {
+            unset($immutable->headers[$nameCi]);
         }
 
         return $immutable;
@@ -249,7 +249,7 @@ class Message implements MessageInterface
     /**
      * Gets the body of the message.
      *
-     * @return StreamInterface Returns the body as a stream.
+     * @return StreamInterface|null Returns the body as a stream.
      */
     public function getBody()
     {

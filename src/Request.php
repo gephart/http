@@ -25,7 +25,7 @@ class Request extends Message implements ServerRequestInterface
     private $queryParams;
 
     /**
-     * @var array
+     * @var null|array|object
      */
     private $parsedBody;
 

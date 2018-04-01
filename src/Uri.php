@@ -17,7 +17,7 @@ class Uri implements UriInterface
     private $host;
 
     /**
-     * @var string
+     * @var int|null
      */
     private $port;
 
@@ -46,13 +46,18 @@ class Uri implements UriInterface
      */
     private $fragment;
 
+    /**
+     * @var string|null
+     */
+    private $userInfo;
+
     public function __construct(string $uri)
     {
         $parse = parse_url($uri);
 
         $this->scheme = isset($parse["scheme"]) ? $parse["scheme"] : "";
         $this->host = isset($parse["host"]) ? $parse["host"] : "";
-        $this->port = isset($parse["port"]) ? $parse["port"] : "";
+        $this->port = isset($parse["port"]) ? $parse["port"] : null;
         $this->user = isset($parse["user"]) ? $parse["user"] : "";
         $this->pass = isset($parse["pass"]) ? $parse["pass"] : "";
         $this->path = isset($parse["path"]) ? $parse["path"] : "";
@@ -125,6 +130,10 @@ class Uri implements UriInterface
      */
     public function getUserInfo()
     {
+        if ($this->userInfo) {
+            return $this->userInfo;
+        }
+
         return $this->user . ($this->pass ? ":" . $this->pass : "");
     }
 
@@ -257,7 +266,7 @@ class Uri implements UriInterface
      */
     public function withScheme($scheme)
     {
-        $this->scheme = (string)$scheme;
+        $this->scheme = $scheme;
     }
 
     /**
@@ -276,7 +285,7 @@ class Uri implements UriInterface
      */
     public function withUserInfo($user, $password = null)
     {
-        $this->userInfo = (string)$user . ($password ? ":" . (string)$password : "");
+        $this->userInfo = $user . ($password ? ":" . $password : "");
     }
 
     /**
@@ -293,7 +302,7 @@ class Uri implements UriInterface
      */
     public function withHost($host)
     {
-        $this->host = (string)$host;
+        $this->host = $host;
     }
 
     /**
@@ -315,7 +324,7 @@ class Uri implements UriInterface
      */
     public function withPort($port)
     {
-        $this->port = (string)$port;
+        $this->port = $port;
     }
 
     /**
@@ -342,7 +351,7 @@ class Uri implements UriInterface
      */
     public function withPath($path)
     {
-        $this->path = (string)$path;
+        $this->path = $path;
     }
 
     /**
@@ -362,7 +371,7 @@ class Uri implements UriInterface
      */
     public function withQuery($query)
     {
-        $this->query = (string)$query;
+        $this->query = $query;
     }
 
     /**
@@ -381,7 +390,7 @@ class Uri implements UriInterface
      */
     public function withFragment($fragment)
     {
-        $this->fragment = (string)$fragment;
+        $this->fragment = $fragment;
     }
 
     /**

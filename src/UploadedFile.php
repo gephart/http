@@ -13,12 +13,12 @@ class UploadedFile implements UploadedFileInterface
     private $tmpName;
 
     /**
-     * @var string
+     * @var int|null
      */
     private $size;
 
     /**
-     * @var string
+     * @var int
      */
     private $error;
 
@@ -32,7 +32,7 @@ class UploadedFile implements UploadedFileInterface
      */
     private $type;
 
-    public function __construct(string $tmpName, string $size, string $error, string  $filename, string $type)
+    public function __construct(string $tmpName, int $size, int $error, string  $filename, string $type)
     {
         $this->tmpName = $tmpName;
         $this->size = $size;
