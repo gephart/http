@@ -79,6 +79,10 @@ class Request extends Message implements ServerRequestInterface
         $this->requestTarget = $uri->getPath();
 
 
+        if (empty($parsedBody) && $body) {
+            $this->parsedBody = json_decode($body->getContents(), true);
+        }
+
         foreach ($headers as $name => $value) {
             $this->setHeader($name, $value);
         }
